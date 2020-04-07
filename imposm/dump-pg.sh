@@ -5,7 +5,8 @@ PG_PORT_DEFAULT=25432
 PG_PORT=$PG_PORT_DEFAULT
 PG_CONTAINER_DEFAULT=osm-postgis
 PG_CONTAINER=$PG_CONTAINER_DEFAULT
-PG_IMAGE_VERSION_DEFAULT=12.1
+# MS, 7.4.2020: Changed to PostGIS 9.6. 
+PG_IMAGE_VERSION_DEFAULT=9.6-2.4
 PG_IMAGE_VERSION=$PG_IMAGE_VERSION_DEFAULT
 PG_CONTAINER_REMOVE_DEFAULT=true
 PG_CONTAINER_REMOVE=$PG_CONTAINER_REMOVE_DEFAULT
@@ -82,7 +83,8 @@ echo -e "\n----------- Remove backup scheme"
 work/imposm-${IMPOSM_VERSION}-linux-x86-64/imposm import -mapping mapping.yml -connection "postgis://docker:docker@localhost:$PG_PORT/gis" -removebackup
 
 echo -e "\n----------- Dumping the backup"
-docker exec -it osm-postgis useradd -u $USERID gis
+# MS, 7.4.2020: Commented useradd command as it threw error when running script as root 
+#docker exec -it osm-postgis useradd -u $USERID gis
 docker exec -it -u $USERID -e PGPASSWORD=docker $PG_CONTAINER pg_dump -v -x -U docker -h 127.0.0.1 gis -f /tmp/work/gis.backup -F c
 
 echo -e "\n----------- Shutting down the database container"
